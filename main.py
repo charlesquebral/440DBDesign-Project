@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, session
+from flask import Flask, redirect, url_for, render_template, request
 
 app = Flask(__name__)
 
@@ -9,6 +9,10 @@ def base():
 @app.route('/login', methods=['POST','GET'])
 def login():
     error= None
+    if request.method == "POST":
+        user = request.form['cred']
+        email = request.form['cred']
+        password = request.form['password']
     return render_template('login.html', error=error)
 
 @app.route('/signup', methods=['POST','GET'])
