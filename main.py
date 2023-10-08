@@ -33,8 +33,12 @@ def login():
         if account:
             session['loggedin'] = True
             session['username'] = account['username']
+            session['firstname'] = account['firstname']
+            session['lastname'] = account['lastname']
+            session['email'] = account['email']
             
-            msg = 'Logged in successfully!'
+            #msg = 'Logged in successfully!'
+            return redirect(url_for('index'))
         else:
 
             cursor.execute('SELECT * FROM accounts WHERE email =%s AND password = %s', (useroremail, password))
@@ -44,8 +48,12 @@ def login():
             if account:
                 session['loggedin'] = True
                 session['username'] = account['username']
+                session['firstname'] = account['firstname']
+                session['lastname'] = account['lastname']
+                session['email'] = account['email']
             
-                msg = 'Logged in successfully!'
+                #msg = 'Logged in successfully!'
+                return redirect(url_for('index'))
             else:
                 msg = 'Incorrect username/password!'
 
@@ -62,7 +70,7 @@ def signup():
     msg = ''
 
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'cpassword' in request.form and 'email' in request.form and 'firstname' in request.form and 'lastname' in request.form:
-        if 'password' == 'cpassword':
+        if request.form['password'] == request.form['cpassword']:
             username = request.form['username']
             password = request.form['password']
             email = request.form['email']
@@ -80,7 +88,21 @@ def signup():
             else:
                 cursor.execute('INSERT INTO accounts VALUES (%s, %s, %s, %s, %s)', (username, firstname, lastname, password, email,))
                 mysql.connection.commit()
-                msg = 'You have successfully registered!'
+                #msg = 'You have successfully registered!'
+
+                cursor.execute('SELECT * FROM accounts WHERE username =%s AND password = %s', (username, password,))
+
+                account = cursor.fetchone()
+
+                if account:
+                    session['loggedin'] = True
+                    session['username'] = account['username']
+                    session['firstname'] = account['firstname']
+                    session['lastname'] = account['lastname']
+                    session['email'] = account['email']
+                
+                    #msg = 'Logged in successfully!'
+                    return redirect(url_for('index'))
         else:
             msg = 'Passwords do not match.'
 
@@ -88,6 +110,22 @@ def signup():
         msg = 'Please complete all the fields and retry.'
 
     return render_template('signup.html', msg=msg)
+
+@app.route('/index', methods=['POST','GET'])
+def index():
+    usernamedisplay = ''
+    firstnamedisplay=''
+    emaildisplay=''
+    lastnamedisplay=''
+
+    if session['loggedin']:
+        usernamedisplay = session['username']
+        firstnamedisplay = session['firstname']
+        emaildisplay = session['email']
+        lastnamedisplay = session['lastname']
+
+    return render_template('index.html', usernamedisplay = usernamedisplay, firstnamedisplay = firstnamedisplay, emaildisplay = emaildisplay, lastnamedisplay = lastnamedisplay)
+
 
 if __name__ == "__main__":
     app.run(debug=1, host='0.0.0.0', port=5000)

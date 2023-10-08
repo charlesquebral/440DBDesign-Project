@@ -16,12 +16,12 @@
     </header>
     <main>
         <section class="profile-display">
-            <h3>Welcome, {{ firstname }} !</h3>
+            <h3>Welcome, {{ firstnamedisplay }}!</h3>
             <!-- Is Data sanitized before rendering to prevent XSS -->
             <div class="msg">
-                <p>Your username is: {{ username }}</p>
-                <p>Your email is: {{ email }}</p>
-                <p>Your lastname is: {{ lastname }}</p>
+                <p>Your username is: {{ usernamedisplay }}</p>
+                <p>Your email is: {{ emaildisplay }}</p>
+                <p>Your lastname is: {{ lastnamedisplay }}</p>
             </div>
             <form action="{{url_for('logout')}}">
                 <div class="button-group">
