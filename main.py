@@ -78,12 +78,11 @@ def signup():
             if user or em:
                 msg = 'A user with that username or email already exists.'
             else:
-                cursor.execute('INSERT INTO accounts VALUES (%s, %s, %s, %s, %s)', (username, firstname, lastname password, email,))
+                cursor.execute('INSERT INTO accounts VALUES (%s, %s, %s, %s, %s)', (username, firstname, lastname, password, email,))
                 mysql.connection.commit()
                 msg = 'You have successfully registered!'
-
         else:
-            Msg = 'Passwords do not match.'
+            msg = 'Passwords do not match.'
 
     elif request.method == 'POST':
         msg = 'Please complete all the fields and retry.'

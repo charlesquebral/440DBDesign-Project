@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <h1 align="center">COMP 440-PROJECT - PHASE 1</h1>
+        <h6 align="center">Charles Quebral, Angel Rinos, Mickey Paung</h6>
+        <h3 align="center">Welcome!</h3>    
+    </head>
+    <body>
+        <div class="profiledisplay">
+            <div class="msg">Welcome, {{ firstname }} !</div>
+            <br>
+            <div class="msg">Your username is: {{ username }} !</div>
+            <div class="msg">Your email is: {{ email }} !</div>
+            <div class="msg">Your lastname is: {{ lastname }} !</div>
+
+            <form action="{{url_for('logout')}}">
+                <div align="center" class="button-group">
+                    <button type="submit" class="btn-primary">Logout</button>
+            </div>
+            </form>
+        </div>
+    </body>
+</html>
