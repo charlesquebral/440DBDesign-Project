@@ -1,48 +1,57 @@
-<html>
-    <head><h1 align="center">COMP 440-PROJECT - PHASE 1</h1>
-        <h6 align="center">Charles Quebral, Angel Rinos, Mickey Paung</h6>
-        <h3 align="center">Sign Up</h3>
-    </head>
-
-    <body>
-        <div class="signupform">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to access COMP 440 Project">
+    <meta name="keywords" content="COMP 440, Project, Login">
+    <meta name="author" content="Charles Quebral, Angel Rinos, Phone Pyae Zaw">
+    <link rel="stylesheet" href="style.css">
+    <title>COMP 440-PROJECT - PHASE 1</title>
+</head>
+<body>
+    <header>
+        <h1>COMP 440-PROJECT - PHASE 1</h1>
+        <h6>Charles Quebral, Angel Rinos, Phone Pyae Zaw</h6>
+    </header>
+    <main>
+        <section class="signup-section">
+            <h3>Sign Up</h3>
             <form action="{{url_for('signup')}}" method="post" autocomplete="off">
-                <div align="center" class="form-group">
+                <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="username" class="form-control" id="username" name="username" placeholder="Enter a username"/>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter a username" required/>
                 </div>
-                <div align="center" class="form-group">
+                <div class="form-group">
                     <label for="firstname">First Name</label>
-                    <input type="firstname" class="form-control" id="firstname" name="firstname" placeholder="Enter first name"/>
+                    <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name" required/>
                 </div>
-                <div align="center" class="form-group">
+                <div class="form-group">
                     <label for="lastname">Last Name</label>
-                    <input type="lastname" class="form-control" id="lastname" name="lastname" placeholder="Enter last name"/>
+                    <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter last name" required/>
                 </div>
-                <div align="center" class="form-group">
+                <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter email"/>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required/>
                 </div>
-                <div align="center" class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter password"/>
+                <div class="form-group">
+                    <!-- Added pattern for password: at least 8 characters, 1 uppercase, 1 number -->
+                    <label for="password" aria-label="Enter a password. It should be at least 8 characters long and contain at least 1 uppercase letter and 1 number.">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required/>
                 </div>
-                <div align="center" class="form-group">
-                    <label for="cpassword">Confirm Password</label>
-                    <input type="cpassword" class="form-control" id="cpassword" name="cpassword" placeholder="Confirm password"/>
+                <div class="form-group">
+                    <label for="cpassword" aria-label="Confirm your password.">Confirm Password</label>
+                    <input type="password" class="form-control" id="cpassword" name="cpassword" placeholder="Confirm password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required/>
                 </div>
-                <div align="center" class="button-group">
+                <div class="button-group">
                     <button type="submit" class="btn-primary">Sign Up</button>
                 </div>
-                <br>
                 <div class="msg">{{ msg }}</div>
             </form>
-        </div>
-        <br>
-        <div align="center" class="link-group">
-            <a id="sign up" href="login">Already Signed Up? Log in</a>
-        </div>
-    </body>
-    <br>
-
+        </section>
+        <section class="link-group">
+            <a href="login">Already Signed Up? Log in</a>
+        </section>
+    </main>
+</body>
 </html>

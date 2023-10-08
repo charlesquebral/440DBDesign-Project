@@ -1,33 +1,39 @@
-<html>
-    <head>
-        <h1 align="center">COMP 440-PROJECT - PHASE 1</h1>
-        <h6 align="center">Charles Quebral, Angel Rinos, Mickey Paung</h6>
-        <h3 align="center">Login</h3>    
-    </head>
-    <body>
-        <div class="loginform">
-            <form action="{{url_for('login')}}" method="post">
-                <div align="center" class="form-group">
-                    <label for="cred">Email or Username</label>
-                    <input type="cred" class="form-control" id="cred" name="cred" placeholder="Enter email or username"/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to access COMP 440 Project">
+    <meta name="keywords" content="COMP 440, Project, Login">
+    <meta name="author" content="Charles Quebral, Angel Rinos, Phone Pyae Zaw">
+    <link rel="stylesheet" href="style.css">
+    <title>COMP 440-PROJECT - PHASE 1</title>
+</head>
+<body>
+    <header>
+        <h1>COMP 440-PROJECT - PHASE 1</h1>
+        <h6>Charles Quebral, Angel Rinos, Phone Pyae Zaw</h6>
+    </header>
+    <main>
+        <section class="login-section">
+            <h3>Login</h3>
+            <form action="/login" method="POST" id="loginForm">
+                <div class="form-group">
+                    <label for="cred" aria-label="Enter your email or username">Email or Username</label>
+                    <input type="text" class="form-control" id="cred" name="cred" placeholder="Enter email or username" required>
                 </div>
-                <div align="center" class="form-group">
+                <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter password"/>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
                 </div>
-                <br>
-                <div class="msg">{{ msg }}</div>
-                <br>
-                <div align="center" class="button-group">
-                        <button type="submit" class="btn-primary">Login</button>
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Login</button>
                 </div>
             </form>
-        
-            <br>
-        
-            <div align="center" class="link-group">
-                <a id="log in" href="signup">Not Registered? Sign up</a>
+            <div class="link-group">
+                <a href="signup">Not Registered? Sign up</a>
             </div>
-        </div>
-    </body>
+        </section>
+    </main>
+</body>
 </html>

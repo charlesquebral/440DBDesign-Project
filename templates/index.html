@@ -1,22 +1,34 @@
-<html>
-    <head>
-        <h1 align="center">COMP 440-PROJECT - PHASE 1</h1>
-        <h6 align="center">Charles Quebral, Angel Rinos, Mickey Paung</h6>
-        <h3 align="center">Welcome!</h3>    
-    </head>
-    <body>
-        <div class="profiledisplay">
-            <div class="msg">Welcome, {{ firstname }} !</div>
-            <br>
-            <div class="msg">Your username is: {{ username }} !</div>
-            <div class="msg">Your email is: {{ email }} !</div>
-            <div class="msg">Your lastname is: {{ lastname }} !</div>
-
-            <form action="{{url_for('logout')}}">
-                <div align="center" class="button-group">
-                    <button type="submit" class="btn-primary">Logout</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to access COMP 440 Project">
+    <meta name="keywords" content="COMP 440, Project, Login">
+    <meta name="author" content="Charles Quebral, Angel Rinos, Phone Pyae Zaw">
+    <link rel="stylesheet" href="style.css">
+    <title>COMP 440-PROJECT - PHASE 1</title>
+</head>
+<body>
+    <header>
+        <h1>COMP 440-PROJECT - PHASE 1</h1>
+        <h6>Charles Quebral, Angel Rinos, Phone Pyae Zaw</h6>
+    </header>
+    <main>
+        <section class="profile-display">
+            <h3>Welcome, {{ firstname }} !</h3>
+            <!-- Is Data sanitized before rendering to prevent XSS -->
+            <div class="msg">
+                <p>Your username is: {{ username }}</p>
+                <p>Your email is: {{ email }}</p>
+                <p>Your lastname is: {{ lastname }}</p>
             </div>
+            <form action="{{url_for('logout')}}">
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Logout</button>
+                </div>
             </form>
-        </div>
-    </body>
+        </section>
+    </main>
+</body>
 </html>
