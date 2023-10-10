@@ -1,7 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, request, session
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
-import MySQLdb.cursors, re, hashlib
 app = Flask(__name__)
 app.secret_key = 'gttbafytsitstillyhj!*'
 app.config['MYSQL_HOST'] = 'localhost'
@@ -20,13 +19,10 @@ def login():
     if request.method == "POST" and 'cred' in request.form and 'password' in request.form:
         useroremail = request.form['cred']
         password = request.form['password']
-
-        # hash = password + app.secret_key
-        # hash = hashlib.sha1(hash.encode())
-        # password = hash.hexdigest()
-
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM accounts WHERE username =%s AND password = %s', (useroremail, password,))
+
+        print(('SELECT * FROM accounts WHERE username =%s AND password = %s', (useroremail, password,)))
 
         account = cursor.fetchone()
 
@@ -37,7 +33,7 @@ def login():
             session['lastname'] = account['lastname']
             session['email'] = account['email']
             
-            #msg = 'Logged in successfully!'
+            #successful login
             return redirect(url_for('index'))
         else:
 
@@ -52,7 +48,7 @@ def login():
                 session['lastname'] = account['lastname']
                 session['email'] = account['email']
             
-                #msg = 'Logged in successfully!'
+                #successful login
                 return redirect(url_for('index'))
             else:
                 msg = 'Incorrect username/password!'
@@ -88,7 +84,7 @@ def signup():
             else:
                 cursor.execute('INSERT INTO accounts VALUES (%s, %s, %s, %s, %s)', (username, firstname, lastname, password, email,))
                 mysql.connection.commit()
-                #msg = 'You have successfully registered!'
+                #successful registration
 
                 cursor.execute('SELECT * FROM accounts WHERE username =%s AND password = %s', (username, password,))
 
