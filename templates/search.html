@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to access COMP 440 Project">
+    <meta name="keywords" content="COMP 440, Project, Login">
+    <meta name="author" content="Charles Quebral, Angel Rinos, Phone Pyae Zaw">
+    <link rel="stylesheet" href="style.css">
+    <title>COMP 440-PROJECT - PHASE 2</title>
+</head>
+<body>
+    <header>
+        <h1>COMP 440-PROJECT - PHASE 2</h1>
+        <h6>Team 20: Charles Quebral, Angel Rinos, Phone Pyae Zaw</h6>
+    </header>
+    <main>
+        <section class="lookup-section">
+            <h3>Search For Items</h3>
+            <form action="{{url_for('search')}}" method="post" autocomplete="off">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" placeholder="Enter Title"/>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" class="form-control" id="description" name="description" placeholder="Enter Description"/>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <input type="text" class="form-control" id="category" name="category" placeholder="Enter Category"/>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <input type="number" class="form-control" id="price" name="price" placeholder="Enter Price"/>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Search</button>
+                </div>
+            </form>
+        </section>
+        <section class="results-group">
+            <h2>{{ msg }}</h2>
+            {%for item in items%}
+                <h6 for="username" id="username" name="username">Posted By: {{item['username']}}</h6>
+                <h2 for="title" id="title" name="title">Title: {{item['title']}}</h2>
+                <h3 for="description" id="description" name="description">Description: {{item['description']}}</h3>
+                <h4 for="price" id="price" name="price">Price: ${{item['price']}}</h4>
+                <h3 for="category" id="category" name="category">Category: {{item['category']}}</h3>
+                <a href="{{ url_for('item', postid=item['postid']) }}">Reviews</a>
+            {%endfor%}
+        </section>
+        <section class="link-group">
+            <a href="index">back</a>
+        </section>
+    </main>
+</body>
+</html>

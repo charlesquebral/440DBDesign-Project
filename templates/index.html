@@ -7,27 +7,28 @@
     <meta name="keywords" content="COMP 440, Project, Login">
     <meta name="author" content="Charles Quebral, Angel Rinos, Phone Pyae Zaw">
     <link rel="stylesheet" href="style.css">
-    <title>COMP 440-PROJECT - PHASE 1</title>
+    <title>COMP 440-PROJECT - PHASE 2</title>
 </head>
 <body>
     <header>
-        <h1>COMP 440-PROJECT - PHASE 1</h1>
+        <h1>COMP 440-PROJECT - PHASE 2</h1>
         <h6>Team 20: Charles Quebral, Angel Rinos, Phone Pyae Zaw</h6>
     </header>
     <main>
         <section class="profile-display">
-            <h3>Welcome, {{ firstnamedisplay }}!</h3>
-            <!-- Is Data sanitized before rendering to prevent XSS -->
-            <div class="msg">
-                <p>Your username is: {{ usernamedisplay }}</p>
-                <p>Your email is: {{ emaildisplay }}</p>
-                <p>Your lastname is: {{ lastnamedisplay }}</p>
-            </div>
-            <form action="{{url_for('logout')}}">
+            <form action="{{url_for('createpost')}}">
                 <div class="button-group">
-                    <button type="submit" class="btn-primary">Logout</button>
+                    <button type="submit" class="btn-primary">Post An Item</button>
                 </div>
             </form>
+            <form action="{{url_for('search')}}">
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Search Items</button>
+                </div>
+            </form>
+        </section>
+        <section class="link-group">
+            <a href="index">Logout</a>
         </section>
     </main>
 </body>

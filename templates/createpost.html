@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create post in COMP 440 Project">
+    <meta name="keywords" content="COMP 440, Project, Login">
+    <meta name="author" content="Charles Quebral, Angel Rinos, Phone Pyae Zaw">
+    <link rel="stylesheet" href="style.css">
+    <title>COMP 440-PROJECT - PHASE 2</title>
+</head>
+<body>
+    <header>
+        <h1>COMP 440-PROJECT - PHASE 2</h1>
+        <h6>Team 20: Charles Quebral, Angel Rinos, Phone Pyae Zaw</h6>
+    </header>
+    <main>
+        <section class="create-section">
+            <h3>Post Item</h3>
+            <form action="{{url_for('createpost')}}" method="post" autocomplete="off">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" placeholder="Enter Title" required/>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" class="form-control" id="description" name="description" placeholder="Enter Description" required/>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <input type="text" class="form-control" id="category" name="category" placeholder="Enter Category" required/>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <input type="number" class="form-control" id="price" name="price" placeholder="Enter Price" required/>
+                </div>
+                <div class="button-group">
+                    <button type="submitpost" class="btn-primary">Create Post</button>
+                </div>
+                <div class="msg">{{ msg }}</div>
+            </form>
+        </section>
+        <section class="link-group">
+            <a href="index">cancel</a>
+        </section>
+    </main>
+</body>
+</html>

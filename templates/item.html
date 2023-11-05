@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to access COMP 440 Project">
+    <meta name="keywords" content="COMP 440, Project, Login">
+    <meta name="author" content="Charles Quebral, Angel Rinos, Phone Pyae Zaw">
+    <title>COMP 440-PROJECT - PHASE 2</title>
+</head>
+<body>
+    <header>
+        <h1>COMP 440-PROJECT - PHASE 2</h1>
+        <h6>Team 20: Charles Quebral, Angel Rinos, Phone Pyae Zaw</h6>
+    </header>
+    <main>
+        <section class="profile-display">
+            <div class="button-group">
+                <h1>{{ title }}</h1>
+                <h4>{{ username }}</h4>
+                <h2>{{ description }}</h2>
+                <h3>{{ price }}</h3>
+                <h5>{{ category }}</h5>
+            </div>
+            
+            <form action="/item" method="POST" id="reviewForm">
+                <label for="feedback">Product Condition:</label>
+                    <select id="feedback" name="feedback">
+                        <option value="excellent">Excellent</option>
+                        <option value="good">Good</option>
+                        <option value="fair">Fair</option>
+                        <option value="poor">Poor</option>
+                    </select>
+                <div class="form-group">
+                    <label for="review">Review</label>
+                    <input type="review" class="form-control" id="review" name="review" placeholder="Enter review" required>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Submit Review</button>
+                </div>
+                <div class="msg">{{ msg }}</div>
+            </form>
+
+            <section class="results-group">
+                <h2>Reviews</h2>
+                {%for item in items%}
+                    <h3 for="username" id="username" name="username">Posted by: {{item['username']}}</h3>
+                    <h6 for="date" id="date" name="date">Posted on: {{item['date']}}</h6>
+                    <h6 for="feedback" id="feedback" name="feedback">Feedback: {{item['feedback']}}</h6>
+                    <h6 for="review" id="review" name="review">Thoughts: {{item['review']}}</h6>
+                {%endfor%}
+            </section>
+
+            <form action="{{url_for('search')}}">
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Back</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
