@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS `reviews` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO reviews (postid, username, feedback, review, date)
-VALUES (2, 'ishmael', 'Fair', 'test', '2023-11-04');
+VALUES (2, 'tacotuesday', 'Excellent', 'test2', '2023-11-04');
 
 SELECT * from reviews

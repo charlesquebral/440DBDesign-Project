@@ -172,7 +172,9 @@ def search():
         if 'category' in request.form:
             category = request.form['category']
             if category != '':
-                sql_query += f" AND category = '{category}'"
+                categories = category.split(",")
+                for cat in categories:
+                    sql_query += f" AND category LIKE '%{cat}%'"
         if 'price' in request.form:
             price = request.form['price']
             if price != '':
@@ -193,7 +195,20 @@ def item(postid):
 
     if request.method == 'POST':
         if request.form['feedback'] != '' and request.form['review'] != '':
-            cursor.execute("SELECT * FROM reviews WHERE username =%s and date =%s", (user, today,))
+            test = cursor.execute("SELECT * FROM reviews WHERE username =%s and date =%s", (user, today,))
+            if (test < 3):
+                cursor.execute("SELECT * FROM posts WHERE postid =%s", (postid))
+                postresult = cursor.fetchone()
+                print(postresult['username'])
+                if postresult['username'] != user:
+                    feedback = request.form['feedback']
+                    review = request.form['review']
+                    cursor.execute('INSERT INTO reviews (postid, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s)', (postid, user, feedback, review, today,))
+                    mysql.connection.commit()
+                else:
+                    msg = "Sorry, you cannot review your own product."
+            else:
+                msg = "Sorry, you have already posted 3 reviews today. Please try again later"
 
     cursor.execute("SELECT * FROM reviews WHERE postid =%s", (postid))
     results = cursor.fetchall()
