@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, render_template, request, session
 from flask_mysqldb import MySQL
 from datetime import date
+import random
 import MySQLdb.cursors
 app = Flask(__name__)
 app.secret_key = 'gttbafytsitstillyhj!*'
@@ -17,7 +18,7 @@ def base():
 @app.route('/login', methods=['POST','GET'])
 def login():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("CREATE TABLE IF NOT EXISTS `accounts` (`username` varchar(50) NOT NULL,`firstname` varchar(50) NOT NULL,`lastname` varchar(50) NOT NULL,`password` varchar(255) NOT NULL,`email` varchar(100) NOT NULL,PRIMARY KEY (`username`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `accounts` (`username` varchar(50) NOT NULL,`firstname` varchar(50) NOT NULL,`lastname` varchar(50) NOT NULL,`password` varchar(255) NOT NULL,`email` varchar(100) NOT NULL,PRIMARY KEY (`username`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     mysql.connection.commit()
     msg = ''
     if request.method == "POST" and 'cred' in request.form and 'password' in request.form:
@@ -65,7 +66,7 @@ def logout():
 @app.route('/signup', methods=['POST','GET'])
 def signup():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("CREATE TABLE IF NOT EXISTS `accounts` (`username` varchar(50) NOT NULL,`firstname` varchar(50) NOT NULL,`lastname` varchar(50) NOT NULL,`password` varchar(255) NOT NULL,`email` varchar(100) NOT NULL,PRIMARY KEY (`username`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `accounts` (`username` varchar(50) NOT NULL,`firstname` varchar(50) NOT NULL,`lastname` varchar(50) NOT NULL,`password` varchar(255) NOT NULL,`email` varchar(100) NOT NULL,PRIMARY KEY (`username`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     mysql.connection.commit()
     msg = ''
 
@@ -129,7 +130,7 @@ def index():
 @app.route('/createpost', methods=['POST','GET'])
 def createpost():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("CREATE TABLE IF NOT EXISTS `posts` (`postid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`title` varchar(50) NOT NULL,`description` varchar(50) NOT NULL,`category` varchar(255) NOT NULL,`price` varchar(100) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`postid`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `posts` (`postid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`title` varchar(50) NOT NULL,`description` varchar(50) NOT NULL,`category` varchar(255) NOT NULL,`price` varchar(100) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`postid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     mysql.connection.commit()
     msg = ''
 
@@ -161,9 +162,9 @@ def search():
     msg = ''
     results = []
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("CREATE TABLE IF NOT EXISTS `posts` (`postid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`title` varchar(50) NOT NULL,`description` varchar(50) NOT NULL,`category` varchar(255) NOT NULL,`price` varchar(100) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`postid`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `posts` (`postid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`title` varchar(50) NOT NULL,`description` varchar(50) NOT NULL,`category` varchar(255) NOT NULL,`price` varchar(100) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`postid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     mysql.connection.commit()
-    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     mysql.connection.commit()
 
     sql_query = "SELECT * FROM posts WHERE 1 = 1"
@@ -175,11 +176,11 @@ def search():
         if 'title' in request.form:
             title = request.form['title']
             if title != '':
-                sql_query += f" AND title = '{title}'"
+                sql_query += f" AND title LIKE '%{title}%'"
         if 'description' in request.form:
             description = request.form['description']
             if description != '':
-                sql_query += f" AND description = '{description}'"
+                sql_query += f" AND description LIKE '%{description}%'"
         if 'category' in request.form:
             category = request.form['category']
             if category != '':
@@ -190,9 +191,10 @@ def search():
         if 'price' in request.form:
             price = request.form['price']
             if price != '':
-                sql_query += f" AND price = '{price}'"
+                sql_query += f" AND price <= {int(price)}"
         findings = cursor.execute(sql_query)
         results = cursor.fetchall()
+        print(sql_query)
         msg = str(findings) + " results found!"
 
     return render_template('search.html', msg=msg, items=results)
@@ -203,7 +205,7 @@ def item(postid):
     user = session['username']
     today = str(date.today())
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     mysql.connection.commit()
 
     if request.method == 'POST':
@@ -233,7 +235,10 @@ def initdb():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     today = str(date.today())
 
-    cursor.execute("CREATE TABLE IF NOT EXISTS `accounts` (`username` varchar(50) NOT NULL,`firstname` varchar(50) NOT NULL,`lastname` varchar(50) NOT NULL,`password` varchar(255) NOT NULL,`email` varchar(100) NOT NULL,PRIMARY KEY (`username`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `accounts` (`username` varchar(50) NOT NULL,`firstname` varchar(50) NOT NULL,`lastname` varchar(50) NOT NULL,`password` varchar(255) NOT NULL,`email` varchar(100) NOT NULL,PRIMARY KEY (`username`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
+    currUser = session['username']
+    cursor.execute('DELETE FROM accounts WHERE username <> %s', (currUser,))
+    cursor.execute('ALTER TABLE accounts AUTO_INCREMENT = 2;')
     mysql.connection.commit()
     for i in range(0, 5):
         username = "user" + str(i)
@@ -241,7 +246,7 @@ def initdb():
         lastname = "lastname" + str(i)
         password = "Password" + str(i) + "*"
         email = "email" + str(i) + "@email.com"
-        cursor.execute('SELECT * FROM accounts WHERE username =%s AND email = %s', (username, email))
+        cursor.execute('SELECT * FROM accounts WHERE username =%s AND email = %s', (username, email,))
         account = cursor.fetchone()
         if not account:
             cursor.execute('INSERT INTO accounts VALUES (%s, %s, %s, %s, %s)', (username, firstname, lastname, password, email,))
@@ -250,32 +255,46 @@ def initdb():
     cursor.execute("SELECT * FROM accounts")
     results = cursor.fetchall()
 
-    cursor.execute("CREATE TABLE IF NOT EXISTS `posts` (`postid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`title` varchar(50) NOT NULL,`description` varchar(50) NOT NULL,`category` varchar(255) NOT NULL,`price` varchar(100) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`postid`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `posts` (`postid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`title` varchar(50) NOT NULL,`description` varchar(50) NOT NULL,`category` varchar(255) NOT NULL,`price` varchar(100) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`postid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
+    cursor.execute('DELETE FROM posts WHERE 1=1')
+    cursor.execute('ALTER TABLE posts AUTO_INCREMENT = 1;')
     mysql.connection.commit()
     for i in range(0, 5):
         username = "username" + str(i)
         title = "username" + str(i) + "'s post " + str(i)
         description = "Description for post " + str(i)
-        category = "Category" + str(i)
-        price = str(i)
-        cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", (username, title, description, category, price, today))
-        mysql.connection.commit()
+        category = "Category0"
+        numCat = random.randint(1, 5)
+        for j in range(1, numCat):
+            category = category + ", Category" +str(j) 
+        price = random.randint(5, 1000)
+        cursor.execute('SELECT * FROM posts WHERE username =%s', (username,))
+        post = cursor.fetchone()
+        if not post:
+            cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", (username, title, description, category, price, today))
+            mysql.connection.commit()
 
-    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
+    cursor.execute('DELETE FROM reviews WHERE 1=1')
+    cursor.execute('ALTER TABLE reviews AUTO_INCREMENT = 1;')
     mysql.connection.commit()
     for i in range(0, 5):
-        import random
         random_int = random.randint(0, 4)
         postid = random_int
         username = "username" + str(i)
         options = ["Excellent", "Good", "Fair", "Poor"]
         feedback = random.choice(options)
-        review = "username" + str(i) + "'s review"
-        cursor.execute('INSERT INTO reviews (postid, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s)', (postid, username, feedback, review, today,))
-        mysql.connection.commit()
+        review = "username" + str(i) + " finds this product " + feedback
+        cursor.execute('SELECT * FROM reviews WHERE username =%s', (username,))
+        rev = cursor.fetchone()
+        if not rev:
+            cursor.execute('INSERT INTO reviews (postid, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s)', (postid, username, feedback, review, today,))
+            mysql.connection.commit()
 
     cursor.execute("SELECT * FROM accounts")
     results = cursor.fetchall()
+    for r in results:
+        r['password'] = r['password'][0] + r['password'][1] + r['password'][2] + '*' * (len(r['password']) - 3)
 
     cursor.execute("SELECT * FROM posts")
     postitems = cursor.fetchall()

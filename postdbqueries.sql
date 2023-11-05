@@ -14,4 +14,4 @@ CREATE TABLE IF NOT EXISTS `posts` (
 INSERT INTO posts (username, title, description, category, price, date)
 VALUES ('testuser', 'testtitle', 'thisisatest', 'test, post', 10000.00, '2023-11-04');
 
-SELECT * from posts
+SELECT * from posts WHERE price <= 891
