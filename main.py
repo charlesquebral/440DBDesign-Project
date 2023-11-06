@@ -280,6 +280,8 @@ def initdb():
     mysql.connection.commit()
     for i in range(0, 5):
         random_int = random.randint(0, 4)
+        while random_int == i:
+            random_int = random.randint(0, 4)
         postid = random_int
         username = "username" + str(i)
         options = ["Excellent", "Good", "Fair", "Poor"]
