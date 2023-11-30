@@ -24,8 +24,10 @@ WHERE username IN (
 
 );
 
-SELECT username
-FROM reviews r
-WHERE ((r.poster = 'melody_wanderer' AND r.username = 'code_ninja') OR (r.poster = 'code_ninja' AND r.username = 'melody_wanderer'))
-GROUP BY username
-HAVING COUNT(feedback = "Excellent") > 0
+SELECT R1.poster, R1.username
+FROM reviews R1
+LEFT JOIN reviews R2 ON R1.poster = R2.username
+                   AND R1.username = R2.poster
+                   AND R1.feedback = 'Excellent'
+                   AND R2.feedback = 'Excellent'
+WHERE R2.poster IS NULL
