@@ -30,20 +30,17 @@ HAVING COUNT(*) = (
 
 SELECT * FROM posts;
 
+#WE WORKING HERE RIGHT NOW
 SELECT DISTINCT t2.username
 FROM posts t1
-JOIN posts t2 ON t1.date = t2.date AND t1.postid <> t2.postid
+JOIN posts t2 ON t1.date = t2.date AND t1.postid <> t2.postid AND t1.username = t2.username
 WHERE (t1.category LIKE '%Category0%' AND t2.category LIKE '%Category5%')
    OR (t1.category LIKE '%Category5%' AND t2.category LIKE '%Category0%')
 GROUP BY t2.username, t2.date
-HAVING COUNT(DISTINCT t2.date) >= 2;
+HAVING COUNT(t2.postid) >= 2;
 
-SELECT username
-FROM posts
-WHERE (category LIKE '%Category0%' AND category LIKE '%Category5%')
-   OR (category LIKE '%Category5%' AND category LIKE '%Category0%')
-GROUP BY username
-HAVING COUNT(DISTINCT DATE(date)) >= 1;
+INSERT INTO posts (username, title, description, category, price, date)
+VALUES ('username4', 'testtitle4', 'thisisatest', 'Category0, Category8', 10000.00, '2023-11-29');
 
 SELECT DISTINCT username
 FROM posts
@@ -65,12 +62,23 @@ AND NOT EXISTS (
     AND r2.feedback != 'Poor'
 );
 
-SELECT DISTINCT username
-FROM posts
-WHERE username NOT IN (
-	SELECT DISTINCT poster
-	FROM reviews
-    WHERE feedback = 'Poor'
-	GROUP BY poster
-	HAVING COUNT(*) >= 1
-);
+SELECT p.postid,
+p.username,
+r.poster,
+r.username,
+r.feedback
+FROM posts p
+JOIN reviews r ON r.postid = p.postid
+GROUP BY r.postid;
+
+SELECT DISTINCT postid
+FROM reviews r1
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM reviews r2
+    WHERE r1.postid = r2.postid
+    AND r2.feedback IN ('Poor', 'Fair')
+)
+AND r1.poster = 'username0';
+
+SELECT * FROM posts WHERE username = 'username0';

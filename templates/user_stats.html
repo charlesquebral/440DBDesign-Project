@@ -23,9 +23,48 @@
                 </div>
             </form>
         </section>
+        <section class="requirement 2">
+            <h3>2. Users who posted at least twice in a day with Categories X and Y</h3>
+            <form action="{{url_for('req2')}}" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="catx" name="catx" placeholder="Category X" />
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="caty" name="caty" placeholder="Category Y" />
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Go</button>
+                </div>
+            </form>
+        </section>
+        <section class="requirement 3">
+            <h3>3. Items posted by user X with only "Excellent" or "Good" comments</h3>
+            <form action="{{url_for('req3')}}" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="userx" name="userx" placeholder="User X" />
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Go</button>
+                </div>
+            </form>
+        </section>
         <section class="requirement 4">
             <h3>4. User(s) With The Most Posts on 5/1/2023</h3>
             <form action="{{url_for('req4')}}">
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Go</button>
+                </div>
+            </form>
+        </section>
+        <section class="requirement 5">
+            <h3>5. Users who are favorited by both users X and Y</h3>
+            <form action="{{url_for('req5')}}" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="userx" name="userx" placeholder="User X" />
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="usery" name="usery" placeholder="User Y" />
+                </div>
                 <div class="button-group">
                     <button type="submit" class="btn-primary">Go</button>
                 </div>

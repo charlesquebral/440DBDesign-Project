@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to access COMP 440 Project">
+    <meta name="keywords" content="COMP 440, Project, Login">
+    <meta name="author" content="Charles Quebral, Angel Rinos, Phone Pyae Zaw">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}" />
+    <title>COMP 440-PROJECT - PHASE 3</title>
+</head>
+<body>
+    <header>
+        <h1>COMP 440-PROJECT - PHASE 3</h1>
+        <h6>Team 20: Charles Quebral, Angel Rinos, Phone Pyae Zaw</h6>
+    </header>
+    <main>
+        <h1>3. Items posted by {{user}} with only "Excellent" or "Good" comments</h1>
+        <section class="results-1">
+            {%for item in items%}
+            <p>----------------------------------------------------------------------------------------------------------------------------------------------------------------------</p>
+            <h6 for="username" id="username" name="username">Posted By: {{item['username']}}</h6>
+            <h2 for="title" id="title" name="title">Title: {{item['title']}}</h2>
+            <h3 for="description" id="description" name="description">Description: {{item['description']}}</h3>
+            <h4 for="price" id="price" name="price">Price: ${{item['price']}}</h4>
+            <h3 for="category" id="category" name="category">Category: {{item['category']}}</h3>
+            <a href="{{ url_for('item', postid=item['postid']) }}">Reviews</a>
+            {%endfor%}
+        </section>
+        <div class="msg">{{ msg }}</div>
+        <section class="link-group">
+            <a href="/index">back</a>
+        </section>
+    </main>
+</body>
+</html>

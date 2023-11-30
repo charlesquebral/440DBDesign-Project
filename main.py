@@ -19,7 +19,7 @@ def base():
 @app.route('/login', methods=['POST','GET'])
 def login():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("CREATE TABLE IF NOT EXISTS `accounts` (`username` varchar(50) NOT NULL,`firstname` varchar(50) NOT NULL,`lastname` varchar(50) NOT NULL,`password` varchar(255) NOT NULL,`email` varchar(100) NOT NULL,PRIMARY KEY (`username`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `accounts` (`username` varchar(50) NOT NULL,`firstname` varchar(50) NOT NULL,`lastname` varchar(50) NOT NULL,`password` varchar(255) NOT NULL,`email` varchar(100) NOT NULL,`favoriteusers` varchar(50),`favoriteitems` varchar(50),PRIMARY KEY (`username`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     mysql.connection.commit()
     msg = ''
     if request.method == "POST" and 'cred' in request.form and 'password' in request.form:
@@ -247,61 +247,127 @@ def initdb():
     cursor.execute('DELETE FROM accounts WHERE username <> %s', (currUser,))
     cursor.execute('ALTER TABLE accounts AUTO_INCREMENT = 2;')
     mysql.connection.commit()
-    for i in range(0, 5):
-        username = "username" + str(i)
-        firstname = "user" + str(i)
-        lastname = "lastname" + str(i)
-        password = "Password" + str(i) + "*"
-        email = "email" + str(i) + "@email.com"
-        cursor.execute('SELECT * FROM accounts WHERE username =%s AND email = %s', (username, email,))
-        account = cursor.fetchone()
-        if not account:
-            cursor.execute('INSERT INTO accounts VALUES (%s, %s, %s, %s, %s)', (username, firstname, lastname, password, email,))
-            mysql.connection.commit()
+
+    #CREATE USERS
+    cursor.execute('INSERT INTO accounts VALUES (%s, %s, %s, %s, %s)', ("silverstorm45", "Emily", "Johnson", "Password0*", "ejohnson@example.com",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO accounts VALUES (%s, %s, %s, %s, %s)', ("techsavvy87", "Jacob", "Martinez", "Password5*", "jmartinez@example.com",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO accounts VALUES (%s, %s, %s, %s, %s)', ("melody_wanderer", "Sophia", "Lee", "Password12*", "slee@example.com",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO accounts VALUES (%s, %s, %s, %s, %s)', ("adventureseeker22", "Liam", "Anderson", "Password7*", "landerson@example.com",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO accounts VALUES (%s, %s, %s, %s, %s)', ("code_ninja", "Ava", "Thompson", "Password88*", "athompson@example.com",))
+    mysql.connection.commit()
 
     cursor.execute("SELECT * FROM accounts")
     results = cursor.fetchall()
+
+    cursor.execute("CREATE TABLE IF NOT EXISTS `favorites` (`favoriteid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`favorite` varchar(100) NOT NULL,`type` varchar(50) NOT NULL,PRIMARY KEY (`favoriteid`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;")
+    cursor.execute('DELETE FROM favorites WHERE username <> %s', (currUser,))
+    cursor.execute('ALTER TABLE favorites AUTO_INCREMENT = 2;')
+    mysql.connection.commit()
+
+    #CREATE FAVORITES
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("silverstorm45", "melody_wanderer", "users",))
+    mysql.connection.commit()
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("silverstorm45", "code_ninja", "users",))
+    mysql.connection.commit()
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("adventureseeker22", "code_ninja", "users",))
+    mysql.connection.commit()
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("adventureseeker22", "techsavvy87", "users",))
+    mysql.connection.commit()
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("adventureseeker22", "melody_wanderer", "users",))
+    mysql.connection.commit()
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("melody_wanderer", "code_ninja", "users",))
+    mysql.connection.commit()
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("melody_wanderer", "adventureseeker22", "users",))
+    mysql.connection.commit()
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("melody_wanderer", "techsavvy87", "users",))
+    mysql.connection.commit()
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("techsavvy87", "silverstorm45", "users",))
+    mysql.connection.commit()
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("techsavvy87", "code_ninja", "users",))
+    mysql.connection.commit()
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("code_ninja", "adventureseeker22", "users",))
+    mysql.connection.commit()
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("code_ninja", "melody_wanderer", "users",))
+    mysql.connection.commit()
+    cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("code_ninja", "silverstorm45", "users",))
+    mysql.connection.commit()
 
     cursor.execute("CREATE TABLE IF NOT EXISTS `posts` (`postid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`title` varchar(50) NOT NULL,`description` varchar(50) NOT NULL,`category` varchar(255) NOT NULL,`price` float NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`postid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     cursor.execute('DELETE FROM posts WHERE 1=1')
     cursor.execute('ALTER TABLE posts AUTO_INCREMENT = 1;')
     mysql.connection.commit()
-    for i in range(0, 5):
-        username = "username" + str(i)
-        title = "username" + str(i) + "'s post " + str(i)
-        description = "Description for post " + str(i)
-        category = "Category0"
-        numCat = random.randint(1, 5)
-        for j in range(1, numCat):
-            category = category + ", Category" +str(j) 
-        price = random.randint(5, 1000)
-        cursor.execute('SELECT * FROM posts WHERE username =%s', (username,))
-        post = cursor.fetchone()
-        if not post:
-            cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", (username, title, description, category, price, today))
-            mysql.connection.commit()
+
+    #CREATE POSTS
+    cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", ("silverstorm45", "iPhone 12", "Used, Good Condition", "electronic, cellphone, apple", "300", "2023-05-01"))
+    mysql.connection.commit()
+
+    cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", ("silverstorm45", "iPhone 13", "Used, Good Condition", "electronic, cellphone, apple", "400", "2023-05-01"))
+    mysql.connection.commit()
+
+    cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", ("silverstorm45", "iPad", "Used, Good Condition", "electronic, tablet, apple", "700", "2023-05-01"))
+    mysql.connection.commit()
+
+    cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", ("melody_wanderer", "MacBook Pro", "Unopened, Mint Condition", "electronic, computer, apple", "1200", "2023-05-01"))
+    mysql.connection.commit()
+
+    cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", ("melody_wanderer", "Samsung GalaxyS", "Unopened, Mint Condition", "electronic, computer, apple", "1200", "2023-05-01"))
+    mysql.connection.commit()
+
+    cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", ("code_ninja", "Roland TD-30KV", "Used, Excellent Condition", "electronic, instrument, roland", "7000", "2023-08-12"))
+    mysql.connection.commit()
+
+    cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", ("techsavvy87", "Airpod Pros Gen 2", "Used, Fair Condition", "electronic, bluetooth, apple", "90", "2023-11-19"))
+    mysql.connection.commit()
+
+    cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", ("techsavvy87", "Gibson Les Paul Studio", "Used, Great Condition", "instrument, gibson", "2700", "2023-04-09"))
+    mysql.connection.commit()
+
+    cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", ("adventureseeker22", "Korg KP2", "Used, Good Condition", "instrument, korg, electronic", "350", "2023-10-27"))
+    mysql.connection.commit()
 
     cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`poster` varchar(50) NOT NULL,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     cursor.execute('DELETE FROM reviews WHERE 1=1')
     cursor.execute('ALTER TABLE reviews AUTO_INCREMENT = 1;')
     mysql.connection.commit()
-    for i in range(0, 5):
-        random_int = random.randint(1, 5)
-        while random_int == i:
-            random_int = random.randint(1, 5)
-        postid = random_int
-        cursor.execute('SELECT * FROM posts WHERE postid =%s', (postid,))
-        res = cursor.fetchone()
-        poster = res['username']
-        username = "username" + str(i)
-        options = ["Excellent", "Good", "Fair", "Poor"]
-        feedback = random.choice(options)
-        review = "username" + str(i) + " finds this product " + feedback
-        cursor.execute('SELECT * FROM reviews WHERE username =%s', (username,))
-        rev = cursor.fetchone()
-        if not rev:
-            cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', (postid, poster, username, feedback, review, today,))
-            mysql.connection.commit()
+    
+    #CREATE REVIEWS
+    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("4", "melody_wanderer", "adventureseeker22", "Excellent", "This is excellent!", "2023-11-20",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("4", "melody_wanderer", "code_ninja", "Excellent", "This is excellent!", "2023-11-21",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("4", "melody_wanderer", "silverstorm45", "Excellent", "This is excellent!", "2023-11-21",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("2", "silverstorm45", "techsavvy87", "Poor", "This is poor!", "2023-11-25",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("3", "silverstorm45", "adventureseeker22", "Good", "This is good!", "2023-11-26",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("7", "techsavvy87", "code_ninja", "Good", "This is good!", "2023-11-21",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("9", "adventureseeker22", "code_ninja", "Good", "This is good!", "2023-11-19",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("9", "adventureseeker22", "techsavvy87", "Fair", "This is fair!", "2023-11-20",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("2", "silverstorm45", "melody_wanderer", "Poor", "This is poor!", "2023-11-25",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("6", "code_ninja", "melody_wanderer", "Poor", "This is poor!", "2023-11-25",))
+    mysql.connection.commit()
 
     cursor.execute("SELECT * FROM accounts")
     results = cursor.fetchall()
@@ -314,7 +380,10 @@ def initdb():
     cursor.execute("SELECT * FROM reviews")
     reviewitems = cursor.fetchall()
 
-    return render_template('initdb.html', items=results, postitems=postitems, reviewitems=reviewitems)
+    cursor.execute("SELECT * FROM favorites")
+    favoriteitems = cursor.fetchall()
+
+    return render_template('initdb.html', items=results, postitems=postitems, reviewitems=reviewitems, favoriteitems=favoriteitems)
 
 @app.route('/req1', methods=['POST','GET'],)
 def req1():
@@ -339,15 +408,87 @@ def req1():
     
     return render_template('req1.html', msg=msg, categories=results)
 
+@app.route('/req2', methods=['POST','GET'],)
+def req2():
+    msg = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    if request.method == 'POST':
+        if 'catx' in request.form and 'caty' in request.form:
+            if str(request.form['catx']) != '' and str(request.form['caty']) != '':
+                if request.form['catx'] != request.form['caty']:
+                    catx = str(request.form['catx'])
+                    caty = str(request.form['caty'])
+                    cursor.execute(f"SELECT DISTINCT t2.username FROM posts t1 JOIN posts t2 ON t1.date = t2.date AND t1.postid <> t2.postid AND t1.username = t2.username WHERE (t1.category LIKE '%{catx}%' AND t2.category LIKE '%{caty}%') OR (t1.category LIKE '%{caty}%' AND t2.category LIKE '%{catx}%') GROUP BY t2.username, t2.date HAVING COUNT(t2.postid) >= 2;")
+                    results = cursor.fetchall()
+                else:
+                    msg = "Categories X and Y cannot be the same!"
+                    results = {}
+            else:
+                msg = "One or more categories are missing!"
+                results = {}
+
+    return render_template('req2.html', msg=msg, results = results)
+
+@app.route('/req3', methods=['POST','GET'],)
+def req3():
+    msg = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    if request.method == 'POST':
+        if 'userx' in request.form:
+            if str(request.form['userx']) != '':
+                userx = str(request.form['userx'])
+                cursor.execute(f"SELECT DISTINCT postid FROM reviews r1 WHERE NOT EXISTS (SELECT 1 FROM reviews r2 WHERE r1.postid = r2.postid AND r2.feedback IN ('Poor', 'Fair')) AND r1.poster = '{userx}';")
+                results = cursor.fetchall()
+                post_ids = [d['postid'] for d in results]
+                posts=[]
+                for i in post_ids:
+                    cursor.execute(f"SELECT * FROM posts WHERE postid = '{i}'")
+                    res = cursor.fetchone()
+                    posts.append(res)
+            else:
+                msg = "User cannot be missing!"
+                userx = ''
+                posts=[]
+                results = {}
+
+    return render_template('req3.html', msg=msg, items=posts, user=userx)
+
 @app.route('/req4', methods=['POST','GET'],)
 def req4():
     msg = ''
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    cursor.execute('SELECT username FROM posts WHERE date = "2023-11-29" GROUP BY username HAVING COUNT(*) = ( SELECT MAX(post_count) FROM (SELECT COUNT(*) AS post_count FROM posts WHERE date = "2023-11-29" GROUP BY username ) AS counts );')
+    cursor.execute('SELECT username FROM posts WHERE date = "2023-05-01" GROUP BY username HAVING COUNT(*) = ( SELECT MAX(post_count) FROM (SELECT COUNT(*) AS post_count FROM posts WHERE date = "2023-05-01" GROUP BY username ) AS counts );')
     results = cursor.fetchall()
     
     return render_template('req4.html', msg=msg, results = results)
+
+@app.route('/req5', methods=['POST','GET'],)
+def req5():
+    msg = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    if request.method == 'POST':
+        if 'userx' in request.form and 'usery' in request.form:
+            if str(request.form['userx']) != '' and str(request.form['usery']) != '':
+                if request.form['userx'] != request.form['usery']:
+                    userx = str(request.form['userx'])
+                    usery = str(request.form['usery'])
+                    cursor.execute(f"SELECT DISTINCT favorite FROM favorites WHERE 1=1 AND type = 'users' AND (username = '{userx}' OR username = '{usery}') AND (favorite <> '{userx}' AND favorite <> '{usery}') GROUP BY favorite HAVING COUNT(*) > 1;")
+                    results = cursor.fetchall()
+                else:
+                    msg = "Users X and Y cannot be the same!"
+                    userx=''
+                    usery=''
+                    results = {}
+            else:
+                msg = "One or more users are missing!"
+                userx=''
+                usery=''
+                results = {}
+    
+    return render_template('req5.html', msg=msg, results=results, userx=userx, usery=usery)
 
 @app.route('/req6', methods=['POST','GET'],)
 def req6():

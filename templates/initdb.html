@@ -40,6 +40,26 @@
             </section>
 
             <section class="results-group">
+                <h2>Accounts</h2>
+                <table border="1">
+                    <tr>
+                        <th>Favorite ID</th>
+                        <th>Username</th>
+                        <th>Favorite</th>
+                        <th>Type</th>
+                    </tr>
+                    {% for item in favoriteitems %}
+                        <tr>
+                            <td>{{item['favoriteid']}}</td>
+                            <td>{{item['username']}}</td>
+                            <td>{{item['favorite']}}</td>
+                            <td>{{item['type']}}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </section>
+
+            <section class="results-group">
                 <h2>Posts</h2>
                 <table border="1">
                     <tr>

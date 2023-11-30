@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to access COMP 440 Project">
+    <meta name="keywords" content="COMP 440, Project, Login">
+    <meta name="author" content="Charles Quebral, Angel Rinos, Phone Pyae Zaw">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}" />
+    <title>COMP 440-PROJECT - PHASE 3</title>
+</head>
+<body>
+    <header>
+        <h1>COMP 440-PROJECT - PHASE 3</h1>
+        <h6>Team 20: Charles Quebral, Angel Rinos, Phone Pyae Zaw</h6>
+    </header>
+    <main>
+        <h1>5. Users who are favorited by both {{userx}} and {{usery}}</h1>
+        <section class="results-1">
+            {%for res in results%}
+            <h3 for="username" id="username" name="username">{{res['favorite']}}</h3>
+            {%endfor%}
+        </section>
+        <div class="msg">{{ msg }}</div>
+        <section class="link-group">
+            <a href="/index">back</a>
+        </section>
+    </main>
+</body>
+</html>
