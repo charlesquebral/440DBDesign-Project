@@ -7,24 +7,19 @@
     <meta name="keywords" content="COMP 440, Project, Login">
     <meta name="author" content="Charles Quebral, Angel Rinos, Phone Pyae Zaw">
     <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}" />
-    <title>COMP 440-PROJECT - PHASE 2</title>
+    <title>COMP 440-PROJECT - PHASE 3</title>
 </head>
 <body>
     <header>
-        <h1>COMP 440-PROJECT - PHASE 2</h1>
+        <h1>COMP 440-PROJECT - PHASE 3</h1>
         <h6>Team 20: Charles Quebral, Angel Rinos, Phone Pyae Zaw</h6>
     </header>
     <main>
-        <section class="profile-display">
-            <div class="button-group">
-                <h1>{{ title }}</h1>
-                <h4>{{ username }}</h4>
-                <h2>{{ description }}</h2>
-                <h3>{{ price }}</h3>
-                <h5>{{ category }}</h5>
-            </div>
-            
+        <section class="display">
             <form action="/item/{{postid}}" method="POST" id="reviewForm">
+                <div class="group">
+                    <h1>{{ poster }}: {{ title }}</h1>
+                </div>
                 <label for="feedback">Product Condition:</label>
                     <select id="feedback" name="feedback">
                         <option value="excellent">Excellent</option>

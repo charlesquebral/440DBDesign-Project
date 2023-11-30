@@ -10,6 +10,6 @@ CREATE TABLE IF NOT EXISTS `accounts` (
     PRIMARY KEY (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO `accounts` (`username`, `firstname`, `lastname`, `password`, `email`) VALUES ('testuser', 'testname', 'testlastname','0ef15de6149819f2d10fc25b8c994b574245f193', 'test@test.com');
+INSERT INTO `accounts` (`username`, `firstname`, `lastname`, `password`, `email`) VALUES ('admin', 'charles', 'quebral','Testpass1*', 'charles.quebral.447@my.csun.edu');
 
-SELECT * FROM accounts
+SELECT * FROM accounts;

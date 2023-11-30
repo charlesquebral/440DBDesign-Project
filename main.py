@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, render_template, request, session
 from flask_mysqldb import MySQL
 from datetime import date
 import random
+import pandas as pd
 import MySQLdb.cursors
 app = Flask(__name__)
 app.secret_key = 'gttbafytsitstillyhj!*'
@@ -208,17 +209,19 @@ def item(postid):
     cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     mysql.connection.commit()
 
+    cursor.execute("SELECT * FROM posts WHERE postid =%s", (postid,))
+    postresult = cursor.fetchone()
+    title = postresult['title']
+    poster = postresult['username']
     if request.method == 'POST':
         if request.form['feedback'] != '' and request.form['review'] != '':
             test = cursor.execute("SELECT * FROM reviews WHERE username =%s and date =%s", (user, today,))
             if (test < 3):
-                cursor.execute("SELECT * FROM posts WHERE postid =%s", (postid))
-                postresult = cursor.fetchone()
                 print(postresult['username'])
                 if postresult['username'] != user:
                     feedback = request.form['feedback']
                     review = request.form['review']
-                    cursor.execute('INSERT INTO reviews (postid, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s)', (postid, user, feedback, review, today,))
+                    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', (postid, poster, user, feedback, review, today,))
                     mysql.connection.commit()
                 else:
                     msg = "Sorry, you cannot review your own product."
@@ -228,7 +231,11 @@ def item(postid):
     cursor.execute("SELECT * FROM reviews WHERE postid =%s", (postid))
     results = cursor.fetchall()
 
-    return render_template('item.html', msg=msg, items=results, postid=postid)
+    return render_template('item.html', msg=msg, items=results, postid=postid, title=title, poster=poster)
+
+@app.route('/user_stats', methods=['POST','GET'])
+def user_stats():
+    return render_template('user_stats.html')
 
 @app.route('/initdb', methods=['POST','GET'])
 def initdb():
@@ -241,8 +248,8 @@ def initdb():
     cursor.execute('ALTER TABLE accounts AUTO_INCREMENT = 2;')
     mysql.connection.commit()
     for i in range(0, 5):
-        username = "user" + str(i)
-        firstname = "username" + str(i)
+        username = "username" + str(i)
+        firstname = "user" + str(i)
         lastname = "lastname" + str(i)
         password = "Password" + str(i) + "*"
         email = "email" + str(i) + "@email.com"
@@ -255,7 +262,7 @@ def initdb():
     cursor.execute("SELECT * FROM accounts")
     results = cursor.fetchall()
 
-    cursor.execute("CREATE TABLE IF NOT EXISTS `posts` (`postid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`title` varchar(50) NOT NULL,`description` varchar(50) NOT NULL,`category` varchar(255) NOT NULL,`price` varchar(100) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`postid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `posts` (`postid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`title` varchar(50) NOT NULL,`description` varchar(50) NOT NULL,`category` varchar(255) NOT NULL,`price` float NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`postid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     cursor.execute('DELETE FROM posts WHERE 1=1')
     cursor.execute('ALTER TABLE posts AUTO_INCREMENT = 1;')
     mysql.connection.commit()
@@ -274,15 +281,18 @@ def initdb():
             cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", (username, title, description, category, price, today))
             mysql.connection.commit()
 
-    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`poster` varchar(50) NOT NULL,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     cursor.execute('DELETE FROM reviews WHERE 1=1')
     cursor.execute('ALTER TABLE reviews AUTO_INCREMENT = 1;')
     mysql.connection.commit()
     for i in range(0, 5):
-        random_int = random.randint(0, 4)
+        random_int = random.randint(1, 5)
         while random_int == i:
-            random_int = random.randint(0, 4)
+            random_int = random.randint(1, 5)
         postid = random_int
+        cursor.execute('SELECT * FROM posts WHERE postid =%s', (postid,))
+        res = cursor.fetchone()
+        poster = res['username']
         username = "username" + str(i)
         options = ["Excellent", "Good", "Fair", "Poor"]
         feedback = random.choice(options)
@@ -290,7 +300,7 @@ def initdb():
         cursor.execute('SELECT * FROM reviews WHERE username =%s', (username,))
         rev = cursor.fetchone()
         if not rev:
-            cursor.execute('INSERT INTO reviews (postid, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s)', (postid, username, feedback, review, today,))
+            cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', (postid, poster, username, feedback, review, today,))
             mysql.connection.commit()
 
     cursor.execute("SELECT * FROM accounts")
@@ -305,6 +315,79 @@ def initdb():
     reviewitems = cursor.fetchall()
 
     return render_template('initdb.html', items=results, postitems=postitems, reviewitems=reviewitems)
+
+@app.route('/req1', methods=['POST','GET'],)
+def req1():
+    msg = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    cursor.execute('SELECT * from posts')
+    df = cursor.fetchall()
+    newdf = pd.DataFrame(df)
+    categories_list = newdf['category'].str.split(', ').explode().tolist()
+    unique_values = list(set(categories_list))
+    results = []
+    for i in unique_values:
+        sql_query = "SELECT * FROM posts WHERE 1 = 1"
+        sql_query += f" AND category LIKE '%{str(i)}%' ORDER BY price DESC"
+        cursor.execute(sql_query)
+        res = cursor.fetchone()
+        res['focus'] = str(i)
+        results.append(res)
+
+    results.sort(key=lambda x: x['focus'])
+    
+    return render_template('req1.html', msg=msg, categories=results)
+
+@app.route('/req4', methods=['POST','GET'],)
+def req4():
+    msg = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    cursor.execute('SELECT username FROM posts WHERE date = "2023-11-29" GROUP BY username HAVING COUNT(*) = ( SELECT MAX(post_count) FROM (SELECT COUNT(*) AS post_count FROM posts WHERE date = "2023-11-29" GROUP BY username ) AS counts );')
+    results = cursor.fetchall()
+    
+    return render_template('req4.html', msg=msg, results = results)
+
+@app.route('/req6', methods=['POST','GET'],)
+def req6():
+    msg = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    cursor.execute("SELECT DISTINCT username FROM accounts WHERE username NOT IN (SELECT DISTINCT poster FROM reviews WHERE feedback = 'Excellent' GROUP BY poster, postid HAVING COUNT(*) >= 3);")
+    results = cursor.fetchall()
+    print(results)
+    return render_template('req6.html', msg=msg, results=results)
+
+@app.route('/req7', methods=['POST','GET'],)
+def req7():
+    msg = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    cursor.execute("SELECT DISTINCT username FROM accounts WHERE username NOT IN ( SELECT DISTINCT username FROM reviews WHERE feedback = 'Poor' GROUP BY username HAVING COUNT(*) >= 1);")
+    results = cursor.fetchall()
+    print(results)
+    return render_template('req7.html', msg=msg, results=results)
+
+@app.route('/req8', methods=['POST','GET'],)
+def req8():
+    msg = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    cursor.execute("SELECT DISTINCT username FROM reviews r1 WHERE feedback = 'Poor' AND NOT EXISTS ( SELECT 1 FROM reviews r2 WHERE r1.username = r2.username AND r2.feedback != 'Poor');")
+    results = cursor.fetchall()
+    print(results)
+    return render_template('req8.html', msg=msg, results=results)
+
+@app.route('/req9', methods=['POST','GET'],)
+def req9():
+    msg = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    cursor.execute("SELECT DISTINCT username FROM posts WHERE username NOT IN (SELECT DISTINCT poster FROM reviews WHERE feedback = 'Poor' GROUP BY poster HAVING COUNT(*) >= 1);")
+    results = cursor.fetchall()
+    print(results)
+    return render_template('req9.html', msg=msg, results=results)
 
 if __name__ == "__main__":
     app.run(debug=1, host='0.0.0.0', port=5000)

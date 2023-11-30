@@ -8,12 +8,12 @@
     <meta name="keywords" content="COMP 440, Project, Login">
     <meta name="author" content="Charles Quebral, Angel Rinos, Phone Pyae Zaw">
     <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}" />
-    <title>COMP 440-PROJECT - PHASE 2</title>
+    <title>COMP 440-PROJECT - PHASE 3</title>
 </head>
 
 <body>
     <header>
-        <h1>COMP 440-PROJECT - PHASE 2</h1>
+        <h1>COMP 440-PROJECT - PHASE 3</h1>
         <h6>Team 20: Charles Quebral, Angel Rinos, Phone Pyae Zaw</h6>
     </header>
     <main>
@@ -46,6 +46,7 @@
         <section class="results-group">
             <h2>{{ msg }}</h2>
             {%for item in items%}
+            <p>----------------------------------------------------------------------------------------------------------------------------------------------------------------------</p>
             <h6 for="username" id="username" name="username">Posted By: {{item['username']}}</h6>
             <h2 for="title" id="title" name="title">Title: {{item['title']}}</h2>
             <h3 for="description" id="description" name="description">Description: {{item['description']}}</h3>
@@ -53,48 +54,6 @@
             <h3 for="category" id="category" name="category">Category: {{item['category']}}</h3>
             <a href="{{ url_for('item', postid=item['postid']) }}">Reviews</a>
             {%endfor%}
-        </section>
-
-        <!--  Section for Most Expensive Items in Each Category -->
-        <section class="lookup-section">
-            <h3>Find Most Expensive Items in Each Category</h3>
-            <form action="{{url_for('most_expensive_per_category')}}" method="post">
-                <div class="button-group">
-                    <button type="submit" class="btn-primary">Most Expensive per Category</button>
-                </div>
-            </form>
-        </section>
-
-        <!--  Section for Finding Users with Two Items in Different Categories on Same Day -->
-        <section class="lookup-section">
-            <h3>Users with Two Items in Different Categories on Same Day</h3>
-            <form action="{{url_for('category_comparison_search')}}" method="post">
-                <div class="form-group">
-                    <label for="category1">Category X</label>
-                    <input type="text" class="form-control" id="category1" name="category1" required>
-                </div>
-                <div class="form-group">
-                    <label for="category2">Category Y</label>
-                    <input type="text" class="form-control" id="category2" name="category2" required>
-                </div>
-                <div class="button-group">
-                    <button type="submit" class="btn-primary">Search Users</button>
-                </div>
-            </form>
-        </section>
-
-        <!--  Section for Listing Items by User X with Only Positive Reviews -->
-        <section class="lookup-section">
-            <h3>Items by User X with Only Positive Reviews</h3>
-            <form action="{{url_for('positive_reviewed_items')}}" method="post">
-                <div class="form-group">
-                    <label for="user">User X</label>
-                    <input type="text" class="form-control" id="user" name="user" placeholder="Enter User X">
-                </div>
-                <div class="button-group">
-                    <button type="submit" class="btn-primary">Search Items by User X</button>
-                </div>
-            </form>
         </section>
 
         <section class="link-group">
