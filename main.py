@@ -19,7 +19,7 @@ def base():
 @app.route('/login', methods=['POST','GET'])
 def login():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("CREATE TABLE IF NOT EXISTS `accounts` (`username` varchar(50) NOT NULL,`firstname` varchar(50) NOT NULL,`lastname` varchar(50) NOT NULL,`password` varchar(255) NOT NULL,`email` varchar(100) NOT NULL,`favoriteusers` varchar(50),`favoriteitems` varchar(50),PRIMARY KEY (`username`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `accounts` (`username` varchar(50) NOT NULL,`firstname` varchar(50) NOT NULL,`lastname` varchar(50) NOT NULL,`password` varchar(255) NOT NULL,`email` varchar(100) NOT NULL,PRIMARY KEY (`username`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     mysql.connection.commit()
     msg = ''
     if request.method == "POST" and 'cred' in request.form and 'password' in request.form:
@@ -165,7 +165,7 @@ def search():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("CREATE TABLE IF NOT EXISTS `posts` (`postid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`title` varchar(50) NOT NULL,`description` varchar(50) NOT NULL,`category` varchar(255) NOT NULL,`price` varchar(100) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`postid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     mysql.connection.commit()
-    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`poster` varchar(50) NOT NULL,`reviewer` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     mysql.connection.commit()
 
     sql_query = "SELECT * FROM posts WHERE 1 = 1"
@@ -195,7 +195,7 @@ def search():
                 sql_query += f" AND price <= {int(price)}"
         findings = cursor.execute(sql_query)
         results = cursor.fetchall()
-        print(sql_query)
+        #print(sql_query)
         msg = str(findings) + " results found!"
 
     return render_template('search.html', msg=msg, items=results)
@@ -206,7 +206,7 @@ def item(postid):
     user = session['username']
     today = str(date.today())
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`poster` varchar(50) NOT NULL,`reviewer` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     mysql.connection.commit()
 
     cursor.execute("SELECT * FROM posts WHERE postid =%s", (postid,))
@@ -217,11 +217,11 @@ def item(postid):
         if request.form['feedback'] != '' and request.form['review'] != '':
             test = cursor.execute("SELECT * FROM reviews WHERE username =%s and date =%s", (user, today,))
             if (test < 3):
-                print(postresult['username'])
+                #print(postresult['username'])
                 if postresult['username'] != user:
                     feedback = request.form['feedback']
                     review = request.form['review']
-                    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', (postid, poster, user, feedback, review, today,))
+                    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', (postid, poster, user, feedback, review, today,))
                     mysql.connection.commit()
                 else:
                     msg = "Sorry, you cannot review your own product."
@@ -333,40 +333,58 @@ def initdb():
     cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", ("adventureseeker22", "Korg KP2", "Used, Good Condition", "instrument, korg, electronic", "350", "2023-10-27"))
     mysql.connection.commit()
 
-    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`poster` varchar(50) NOT NULL,`username` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
+    cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`poster` varchar(50) NOT NULL,`reviewer` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     cursor.execute('DELETE FROM reviews WHERE 1=1')
     cursor.execute('ALTER TABLE reviews AUTO_INCREMENT = 1;')
     mysql.connection.commit()
     
     #CREATE REVIEWS
-    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("4", "melody_wanderer", "adventureseeker22", "Excellent", "This is excellent!", "2023-11-20",))
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("4", "melody_wanderer", "adventureseeker22", "Excellent", "This is excellent!", "2023-11-20",))
     mysql.connection.commit()
 
-    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("4", "melody_wanderer", "code_ninja", "Excellent", "This is excellent!", "2023-11-21",))
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("5", "melody_wanderer", "adventureseeker22", "Excellent", "This is excellent!", "2023-12-01",))
     mysql.connection.commit()
 
-    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("4", "melody_wanderer", "silverstorm45", "Excellent", "This is excellent!", "2023-11-21",))
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("4", "melody_wanderer", "code_ninja", "Excellent", "This is excellent!", "2023-11-21",))
     mysql.connection.commit()
 
-    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("2", "silverstorm45", "techsavvy87", "Poor", "This is poor!", "2023-11-25",))
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("4", "melody_wanderer", "silverstorm45", "Excellent", "This is excellent!", "2023-11-21",))
     mysql.connection.commit()
 
-    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("3", "silverstorm45", "adventureseeker22", "Good", "This is good!", "2023-11-26",))
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("2", "silverstorm45", "techsavvy87", "Poor", "This is poor!", "2023-11-25",))
     mysql.connection.commit()
 
-    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("7", "techsavvy87", "code_ninja", "Good", "This is good!", "2023-11-21",))
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("3", "silverstorm45", "adventureseeker22", "Good", "This is good!", "2023-11-26",))
     mysql.connection.commit()
 
-    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("9", "adventureseeker22", "code_ninja", "Good", "This is good!", "2023-11-19",))
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("7", "techsavvy87", "code_ninja", "Good", "This is good!", "2023-11-21",))
     mysql.connection.commit()
 
-    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("9", "adventureseeker22", "techsavvy87", "Fair", "This is fair!", "2023-11-20",))
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("1", "silverstorm45", "code_ninja", "Excellent", "This is Excellent!", "2023-11-19",))
     mysql.connection.commit()
 
-    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("2", "silverstorm45", "melody_wanderer", "Poor", "This is poor!", "2023-11-25",))
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("2", "silverstorm45", "code_ninja", "Excellent", "This is Excellent!", "2023-11-19",))
     mysql.connection.commit()
 
-    cursor.execute('INSERT INTO reviews (postid, poster, username, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("6", "code_ninja", "melody_wanderer", "Poor", "This is poor!", "2023-11-25",))
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("3", "silverstorm45", "code_ninja", "Excellent", "This is Excellent!", "2023-11-19",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("9", "adventureseeker22", "code_ninja", "Good", "This is good!", "2023-11-19",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("8", "techsavvy87", "adventureseeker22", "Excellent", "This is Excellent!", "2023-11-20",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("9", "adventureseeker22", "techsavvy87", "Fair", "This is fair!", "2023-11-20",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("2", "silverstorm45", "melody_wanderer", "Poor", "This is poor!", "2023-11-25",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("6", "code_ninja", "melody_wanderer", "Poor", "This is poor!", "2023-11-25",))
+    mysql.connection.commit()
+
+    cursor.execute('INSERT INTO reviews (postid, poster, reviewer, feedback, review, date) VALUES (%s, %s, %s, %s, %s, %s)', ("6", "code_ninja", "silverstorm45", "Excellent", "This is Excellent!", "2023-11-19",))
     mysql.connection.commit()
 
     cursor.execute("SELECT * FROM accounts")
@@ -413,6 +431,9 @@ def req2():
     msg = ''
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
+    catx=''
+    caty=''
+
     if request.method == 'POST':
         if 'catx' in request.form and 'caty' in request.form:
             if str(request.form['catx']) != '' and str(request.form['caty']) != '':
@@ -428,7 +449,7 @@ def req2():
                 msg = "One or more categories are missing!"
                 results = {}
 
-    return render_template('req2.html', msg=msg, results = results)
+    return render_template('req2.html', msg=msg, results=results, catx=catx, caty=caty)
 
 @app.route('/req3', methods=['POST','GET'],)
 def req3():
@@ -497,7 +518,7 @@ def req6():
 
     cursor.execute("SELECT DISTINCT username FROM accounts WHERE username NOT IN (SELECT DISTINCT poster FROM reviews WHERE feedback = 'Excellent' GROUP BY poster, postid HAVING COUNT(*) >= 3);")
     results = cursor.fetchall()
-    print(results)
+    #print(results)
     return render_template('req6.html', msg=msg, results=results)
 
 @app.route('/req7', methods=['POST','GET'],)
@@ -505,9 +526,9 @@ def req7():
     msg = ''
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    cursor.execute("SELECT DISTINCT username FROM accounts WHERE username NOT IN ( SELECT DISTINCT username FROM reviews WHERE feedback = 'Poor' GROUP BY username HAVING COUNT(*) >= 1);")
+    cursor.execute("SELECT DISTINCT username FROM accounts WHERE username NOT IN ( SELECT DISTINCT reviewer FROM reviews WHERE feedback = 'Poor' GROUP BY reviewer HAVING COUNT(*) >= 1);")
     results = cursor.fetchall()
-    print(results)
+    #print(results)
     return render_template('req7.html', msg=msg, results=results)
 
 @app.route('/req8', methods=['POST','GET'],)
@@ -515,9 +536,9 @@ def req8():
     msg = ''
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    cursor.execute("SELECT DISTINCT username FROM reviews r1 WHERE feedback = 'Poor' AND NOT EXISTS ( SELECT 1 FROM reviews r2 WHERE r1.username = r2.username AND r2.feedback != 'Poor');")
+    cursor.execute("SELECT DISTINCT reviewer FROM reviews r1 WHERE feedback = 'Poor' AND NOT EXISTS ( SELECT 1 FROM reviews r2 WHERE r1.reviewer = r2.reviewer AND r2.feedback != 'Poor');")
     results = cursor.fetchall()
-    print(results)
+    #print(results)
     return render_template('req8.html', msg=msg, results=results)
 
 @app.route('/req9', methods=['POST','GET'],)
@@ -527,8 +548,18 @@ def req9():
 
     cursor.execute("SELECT DISTINCT username FROM posts WHERE username NOT IN (SELECT DISTINCT poster FROM reviews WHERE feedback = 'Poor' GROUP BY poster HAVING COUNT(*) >= 1);")
     results = cursor.fetchall()
-    print(results)
+    #print(results)
     return render_template('req9.html', msg=msg, results=results)
+
+@app.route('/req10', methods=['POST','GET'],)
+def req10():
+    msg = ''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    cursor.execute("SELECT r1.poster AS poster1, r1.reviewer AS reviewer1,(SELECT COUNT(*) FROM posts p WHERE p.username = r1.poster) AS post_count_r1 FROM reviews r1 JOIN reviews r2 ON r1.poster = r2.reviewer AND r1.reviewer = r2.poster WHERE (r1.feedback = 'Excellent' AND r2.feedback = 'Excellent') GROUP BY r1.poster, r1.reviewer, r2.poster, r2.reviewer, r2.feedback HAVING COUNT(r2.poster) = post_count_r1;")
+    results = cursor.fetchall()
+    #print(results)
+    return render_template('req10.html', msg=msg, results=results)
 
 if __name__ == "__main__":
     app.run(debug=1, host='0.0.0.0', port=5000)

@@ -18,11 +18,11 @@
         <h1>8. Users who only post "Poor" reviews</h1>
         <section class="results-8">
             {%for res in results%}
-            <h3 for="username" id="username" name="username">{{res['username']}}</h3>
+            <h3 for="username" id="username" name="username">{{res['reviewer']}}</h3>
             {%endfor%}
         </section>
         <section class="link-group">
-            <a href="/index">back</a>
+            <a href="/user_stats">back</a>
         </section>
     </main>
 </body>
