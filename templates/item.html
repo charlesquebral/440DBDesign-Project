@@ -40,7 +40,7 @@
             <section class="results-group">
                 <h2>Reviews</h2>
                 {%for item in items%}
-                    <h3 for="username" id="username" name="username">Posted by: {{item['username']}}</h3>
+                    <h3 for="username" id="username" name="username">Posted by: {{item['reviewer']}}</h3>
                     <h6 for="date" id="date" name="date">Posted on: {{item['date']}}</h6>
                     <h6 for="feedback" id="feedback" name="feedback">Feedback: {{item['feedback']}}</h6>
                     <h6 for="review" id="review" name="review">Thoughts: {{item['review']}}</h6>

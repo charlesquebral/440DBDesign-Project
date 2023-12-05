@@ -215,7 +215,7 @@ def item(postid):
     poster = postresult['username']
     if request.method == 'POST':
         if request.form['feedback'] != '' and request.form['review'] != '':
-            test = cursor.execute("SELECT * FROM reviews WHERE username =%s and date =%s", (user, today,))
+            test = cursor.execute("SELECT * FROM reviews WHERE reviewer =%s and date =%s", (user, today,))
             if (test < 3):
                 #print(postresult['username'])
                 if postresult['username'] != user:
@@ -228,7 +228,7 @@ def item(postid):
             else:
                 msg = "Sorry, you have already posted 3 reviews today. Please try again later"
 
-    cursor.execute("SELECT * FROM reviews WHERE postid =%s", (postid))
+    cursor.execute("SELECT * FROM reviews WHERE postid =%s", [postid])
     results = cursor.fetchall()
 
     return render_template('item.html', msg=msg, items=results, postid=postid, title=title, poster=poster)
@@ -242,6 +242,7 @@ def initdb():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     today = str(date.today())
 
+    cursor.execute("DROP TABLE IF EXISTS accounts")
     cursor.execute("CREATE TABLE IF NOT EXISTS `accounts` (`username` varchar(50) NOT NULL,`firstname` varchar(50) NOT NULL,`lastname` varchar(50) NOT NULL,`password` varchar(255) NOT NULL,`email` varchar(100) NOT NULL,PRIMARY KEY (`username`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     currUser = session['username']
     cursor.execute('DELETE FROM accounts WHERE username <> %s', (currUser,))
@@ -267,6 +268,7 @@ def initdb():
     cursor.execute("SELECT * FROM accounts")
     results = cursor.fetchall()
 
+    cursor.execute("DROP TABLE IF EXISTS favorites")
     cursor.execute("CREATE TABLE IF NOT EXISTS `favorites` (`favoriteid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`favorite` varchar(100) NOT NULL,`type` varchar(50) NOT NULL,PRIMARY KEY (`favoriteid`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;")
     cursor.execute('DELETE FROM favorites WHERE username <> %s', (currUser,))
     cursor.execute('ALTER TABLE favorites AUTO_INCREMENT = 2;')
@@ -300,6 +302,7 @@ def initdb():
     cursor.execute('INSERT INTO favorites (`username`, `favorite`, `type`) VALUES (%s, %s, %s);', ("code_ninja", "silverstorm45", "users",))
     mysql.connection.commit()
 
+    cursor.execute("DROP TABLE IF EXISTS posts")
     cursor.execute("CREATE TABLE IF NOT EXISTS `posts` (`postid` INT AUTO_INCREMENT,`username` varchar(50) NOT NULL,`title` varchar(50) NOT NULL,`description` varchar(50) NOT NULL,`category` varchar(255) NOT NULL,`price` float NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`postid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     cursor.execute('DELETE FROM posts WHERE 1=1')
     cursor.execute('ALTER TABLE posts AUTO_INCREMENT = 1;')
@@ -333,6 +336,8 @@ def initdb():
     cursor.execute("INSERT INTO posts (username, title, description, category, price, date) VALUES (%s, %s, %s, %s, %s, %s);", ("adventureseeker22", "Korg KP2", "Used, Good Condition", "instrument, korg, electronic", "350", "2023-10-27"))
     mysql.connection.commit()
 
+
+    cursor.execute("DROP TABLE IF EXISTS reviews")
     cursor.execute("CREATE TABLE IF NOT EXISTS `reviews` (`reviewid` INT AUTO_INCREMENT,`postid` INT,`poster` varchar(50) NOT NULL,`reviewer` varchar(50) NOT NULL,`feedback` varchar(50) NOT NULL,`review` varchar(255) NOT NULL,`date` varchar(50) NOT NULL,PRIMARY KEY (`reviewid`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;")
     cursor.execute('DELETE FROM reviews WHERE 1=1')
     cursor.execute('ALTER TABLE reviews AUTO_INCREMENT = 1;')
